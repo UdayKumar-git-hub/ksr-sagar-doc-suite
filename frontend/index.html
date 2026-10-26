@@ -1,10 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-US">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>KSR Sagar Document Suite | Institutional PDF to Word Engine</title>
+    <meta name="description" content="Institutional Day Time Table PDF to Word (.docx & .doc) conversion and presentation deck generator with high fidelity formatting." />
+    <meta name="theme-color" content="#FF5100" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet" />
+    <script>
+      (function () {
+        try {
+          var s = localStorage.getItem('zane-theme');
+          var m = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+          var t = s || (m ? 'dark' : 'light');
+          if (t === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) { }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

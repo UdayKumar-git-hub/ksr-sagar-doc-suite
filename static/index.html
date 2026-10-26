@@ -99,7 +99,7 @@
     </div>
 
     <h1 class="shero__title reveal" data-d="2">
-      Timetable<br>Converter<span class="o">.</span>
+      Timetable<span class="shero__br"><br></span>Converter<span class="o">.</span>
     </h1>
 
     <div class="shero__grid">
@@ -168,10 +168,9 @@
           <div class="zcard__title">
             <span class="o">⚡</span> Upload Day Time Table PDF
           </div>
-          <div style="display: flex; gap: 12px; align-items: center;">
+          <div class="schedule-date-wrap">
             <label class="zlabel">Schedule Date:</label>
-            <input type="text" id="timetable-custom-date" class="zinput" value="10 October, 2026"
-              style="width: 180px; padding: 8px 14px; font-size: 14px;">
+            <input type="text" id="timetable-custom-date" class="zinput" value="10 October, 2026">
           </div>
         </div>
 
@@ -310,19 +309,22 @@
       <div class="zcard" id="preview-card" style="display: none; margin-top: 28px;">
         <div class="zcard__head">
           <div class="zcard__title">
-            <span class="o">📋</span> Extracted Schedule Records
-            <span id="stat-total-classes" class="badge-pill badge--theory" style="margin-left: 8px;">0 Classes</span>
-            <span id="stat-theory-count" class="badge-pill badge--theory">0 Theory</span>
-            <span id="stat-lab-count" class="badge-pill badge--lab">0 Labs</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="o">📋</span> Extracted Schedule Records
+            </div>
+            <div class="stat-badges-wrap">
+              <span id="stat-total-classes" class="badge-pill badge--theory">0 Classes</span>
+              <span id="stat-theory-count" class="badge-pill badge--theory">0 Theory</span>
+              <span id="stat-lab-count" class="badge-pill badge--lab">0 Labs</span>
+            </div>
           </div>
 
-          <div class="table-controls-mobile" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-            <select id="branch-select" class="zselect" style="width: auto; padding: 8px 14px; font-size: 13.5px;"
-              onchange="filterTableByBranch()">
+          <div class="table-controls-mobile">
+            <select id="branch-select" class="zselect" onchange="filterTableByBranch()">
               <option value="ALL">All Branches</option>
             </select>
 
-            <div style="display: flex; gap: 6px;">
+            <div class="filter-btn-group">
               <button id="filter-all-btn" class="btn btn--orange btn--sm" onclick="setSessionFilter('ALL')">All</button>
               <button id="filter-theory-btn" class="btn btn--outline btn--sm"
                 onclick="setSessionFilter('THEORY')">Theory</button>
@@ -331,9 +333,9 @@
             </div>
 
             <input type="text" id="class-search-input" class="zinput" placeholder="Search class or code..."
-              style="width: 170px; padding: 8px 14px; font-size: 13.5px;" oninput="filterTableBySearch()">
+              oninput="filterTableBySearch()">
 
-            <button class="btn btn--ink btn--sm" onclick="exportEditedTimetable()">
+            <button class="btn btn--ink btn--sm btn-save-export" onclick="exportEditedTimetable()">
               Save Edits &amp; Direct Export <span class="btn__arrow">→</span>
             </button>
           </div>
@@ -365,7 +367,7 @@
     <!-- ================= TAB 2: PRESENTATION SLIDES (COMING SOON) ================= -->
     <div id="tab-slides" class="tab-pane" style="display: none;">
 
-      <div class="zcard" style="text-align: center; padding: 68px 24px;">
+      <div class="zcard" style="text-align: center; padding: clamp(36px, 6vw, 68px) 20px;">
         <div class="coming-soon-icon">
           📊
         </div>
@@ -377,17 +379,17 @@
         </div>
 
         <h2
-          style="font-family: var(--sans-display); font-size: clamp(24px, 2.5vw, 34px); font-weight: 800; margin: 18px 0 12px; color: var(--ink); letter-spacing: -0.02em;">
+          style="font-family: var(--sans-display); font-size: clamp(22px, 3.5vw, 34px); font-weight: 800; margin: 18px 0 12px; color: var(--ink); letter-spacing: -0.02em; line-height: 1.2;">
           AI Slide Deck Generator v3.5
         </h2>
 
-        <p style="max-width: 580px; margin: 0 auto 28px; color: var(--grey); font-size: 15.5px; line-height: 1.65;">
+        <p style="max-width: 580px; margin: 0 auto 28px; color: var(--grey); font-size: clamp(13.5px, 2vw, 15.5px); line-height: 1.6;">
           This engine module is currently being fine-tuned to automatically ingest institutional Day Time Table
           schedules and output structured 7-slide Microsoft PowerPoint (<code style="color:var(--orange)">.pptx</code>)
           lecture presentations complete with syllabus objectives, architecture diagrams, and speaker notes.
         </p>
 
-        <div style="display: inline-flex; align-items: center; gap: 12px;">
+        <div class="coming-soon-actions">
           <button class="btn btn--outline" disabled style="opacity: 0.7; cursor: not-allowed;">
             Feature Coming Soon <span class="btn__arrow">→</span>
           </button>
