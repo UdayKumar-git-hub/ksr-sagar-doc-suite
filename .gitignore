@@ -1,0 +1,12 @@
+node_modules
+__pycache__
+*.pyc
+outputs/
+uploads/
+ref_converted/
+extracted_assets/
+.env
+.DS_Store
+frontend/node_modules
+frontend/dist
+.vercel

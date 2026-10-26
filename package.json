@@ -1,0 +1,15 @@
+{
+  "name": "ksr-sagar-doc-suite",
+  "version": "1.0.0",
+  "description": "KSR Sagar Document Converter Suite",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "server": "python server.py",
+    "start": "python server.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

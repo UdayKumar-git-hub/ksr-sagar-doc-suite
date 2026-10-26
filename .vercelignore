@@ -1,0 +1,15 @@
+node_modules
+__pycache__
+*.pyc
+outputs
+uploads
+ref_converted
+extracted_assets
+test_*.py
+inspect_*.py
+check_*.py
+diff_*.py
+forensic.py
+.git
+frontend/node_modules
+frontend/dist

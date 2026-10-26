@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>KSR Sagar Document Suite | Institutional PDF to Word & PowerPoint Engine</title>
+  <meta name="description" content="Institutional Day Time Table PDF to Word (.docx & .doc) conversion and presentation deck generator with high fidelity formatting.">
+  <meta name="theme-color" content="#FF5100">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/style.css">
+  
+  <script>
+    // Inline early dark theme initializer to prevent flash
+    (function(){
+      try {
+        var s = localStorage.getItem('zane-theme');
+        var m = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches;
+        var t = s || (m ? 'dark' : 'light');
+        if (t === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body>
+  <!-- Global Top Progress Indicator -->
+  <div id="global-progress" class="global-progress-bar">
+    <div id="global-progress-fill" class="global-progress-fill"></div>
+  </div>
+
+  <!-- Fixed Sticky Header Navigation -->
+  <header class="nav" id="main-nav">
+    <div class="nav__inner">
+      <a class="brand" href="/" aria-label="KSR Sagar Home">
+        <span class="brand__row">
+          <span class="brand__mark">KSR SAGAR</span>
+        </span>
+        <span class="brand__est">CONVERTER SUITE. EST2026.</span>
+      </a>
+
+      <nav class="nav__links" aria-label="Primary Navigation">
+        <button class="nav__link active" id="nav-link-timetable" onclick="switchTab('timetable')">
+          01. Timetable to Word
+        </button>
+        <button class="nav__link" id="nav-link-slides" onclick="switchTab('slides')">
+          02. Slide Generator <span class="badge-soon">COMING SOON</span>
+        </button>
+      </nav>
+
+      <div class="nav__right">
+        <span class="nav__status">Engine Ready</span>
+        
+        <!-- Dark / Light Theme Toggle -->
+        <button class="nav__toggle" id="zane-theme-toggle" type="button" aria-label="Toggle theme">
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+          </svg>
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4.2"/>
+            <path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <section class="crumb wrap">
+    <nav class="crumb__path reveal">
+      <a href="/">KSR</a>
+      <span class="sep">/</span>
+      <a href="#operation">Services</a>
+      <span class="sep">/</span>
+      <span class="here">Timetable &amp; Presentation Suite</span>
+    </nav>
+  </section>
+
+  <!-- Service Hero Section -->
+  <section class="shero wrap">
+    <div class="shero__top">
+      <div class="shero__live reveal" data-d="1">
+        Live Conversion Engine v3.0
+      </div>
+      <span class="label reveal" data-d="1">IARE Saturday Schedule Architecture</span>
+    </div>
+
+    <h1 class="shero__title reveal" data-d="2">
+      Timetable<br>Converter<span class="o">.</span>
+    </h1>
+
+    <div class="shero__grid">
+      <p class="shero__lead reveal" data-d="3">
+        Institutional document conversion that parses Day Time Table PDFs <span class="muted">into official Microsoft Word (.docx &amp; .doc) formats with 100% table fidelity, separated into Theory and Laboratories timetables, plus AI lecture slides.</span>
+      </p>
+
+      <div class="shero__aside reveal" data-d="4">
+        <div class="shero__cta">
+          <button class="btn btn--orange" onclick="document.getElementById('file-timetable-input').click()">
+            Upload Day Time Table PDF <span class="btn__arrow">→</span>
+          </button>
+        </div>
+        <p class="label" style="margin-top: 6px;">Zero JSON latency • Direct Word &amp; PowerPoint exports</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Continuous Infinite Marquee Showcase -->
+  <section class="showcase" aria-label="Engine capabilities showcase">
+    <div class="showcase__head wrap">
+      <span class="label label--dot reveal">Capabilities &amp; Core Output Formats</span>
+    </div>
+    <div class="showcase__viewport">
+      <div class="showcase__track">
+        <div class="showcase__chip"><span class="chip-dot"></span> B.Tech Theory Day Time Table (.docx &amp; .doc)</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> Laboratories Day Time Table (.docx &amp; .doc)</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> 142 Class Sections &amp; 546 Periods Parsed</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> 7-Slide Structured Faculty Lecture Decks (.pptx)</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> Genuine Binary Word 97-2003 COM Export</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> Dean PG &amp; Saturday Schedule Integration</div>
+        <!-- Duplicate for continuous seamless marquee loop -->
+        <div class="showcase__chip"><span class="chip-dot"></span> B.Tech Theory Day Time Table (.docx &amp; .doc)</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> Laboratories Day Time Table (.docx &amp; .doc)</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> 142 Class Sections &amp; 546 Periods Parsed</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> 7-Slide Structured Faculty Lecture Decks (.pptx)</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> Genuine Binary Word 97-2003 COM Export</div>
+        <div class="showcase__chip"><span class="chip-dot"></span> Dean PG &amp; Saturday Schedule Integration</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Workspace Content -->
+  <main class="wrap zsection">
+    
+    <!-- Segmented Nav Controls -->
+    <div class="segmented-nav">
+      <button class="seg-btn active" id="seg-btn-timetable" onclick="switchTab('timetable')">
+        01. Timetable PDF to 2 Word Docs (Theory &amp; Labs)
+      </button>
+      <button class="seg-btn" id="seg-btn-slides" onclick="switchTab('slides')">
+        02. Slide Generator <span class="badge-soon">COMING SOON</span>
+      </button>
+    </div>
+
+    <!-- ================= TAB 1: TIMETABLE CONVERTER ================= -->
+    <div id="tab-timetable" class="tab-pane">
+      
+      <!-- Upload Card -->
+      <div class="zcard">
+        <div class="zcard__head">
+          <div class="zcard__title">
+            <span class="o">⚡</span> Upload Day Time Table PDF
+          </div>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <label class="zlabel">Schedule Date:</label>
+            <input type="text" id="timetable-custom-date" class="zinput" value="10 October, 2026" style="width: 180px; padding: 8px 14px; font-size: 14px;">
+          </div>
+        </div>
+
+        <div class="zdropzone" id="timetable-dropzone" 
+             onclick="handleDropzoneClick(event)"
+             ondragover="handleDragOver(event)" 
+             ondragleave="handleDragLeave(event)" 
+             ondrop="handleDrop(event)">
+          <input type="file" id="file-timetable-input" accept=".pdf" style="display: none;" onchange="handleFileUpload(event)">
+          
+          <!-- Idle Default State -->
+          <div class="zdropzone__content" id="dropzone-idle">
+            <div class="zdropzone__icon">📑</div>
+            <div class="zdropzone__title">Select or Drop Institutional PDF File</div>
+            <div class="zdropzone__desc">Automatic separation into Theory Day Time Table &amp; Laboratories Day Time Table</div>
+            <button type="button" class="btn btn--outline btn--sm">Browse File</button>
+          </div>
+
+          <!-- Active Uploading Level Animation State -->
+          <div class="upload-level" id="upload-level-container" style="display: none;">
+            <div class="upload-level__filecard">
+              <div class="upload-spinner" id="upload-spinner"></div>
+              <span class="upload-level__fileicon">📑</span>
+              <div class="upload-level__fileinfo">
+                <div class="upload-level__filename" id="upload-level-filename">Day_Time_Table.pdf</div>
+                <div class="upload-level__filesize" id="upload-level-filesize">Preparing stream...</div>
+              </div>
+              <div class="upload-level__badge" id="upload-level-badge">PROCESSING</div>
+            </div>
+
+            <!-- Dynamic Equalizer Bars -->
+            <div class="upload-level__equalizer" id="upload-equalizer">
+              <span class="eq-bar"></span>
+              <span class="eq-bar"></span>
+              <span class="eq-bar"></span>
+              <span class="eq-bar"></span>
+              <span class="eq-bar"></span>
+              <span class="eq-bar"></span>
+              <span class="eq-bar"></span>
+              <span class="eq-bar"></span>
+            </div>
+
+            <!-- Real-time Stats Readout -->
+            <div class="upload-level__stats">
+              <div class="upload-level__status-text" id="upload-level-status">LEVEL 1: Uploading PDF stream...</div>
+              <div class="upload-level__pct" id="upload-level-pct">0%</div>
+            </div>
+
+            <!-- Liquid Glow Level Meter -->
+            <div class="upload-level__meter">
+              <div class="upload-level__bar" id="upload-level-bar" style="width: 0%;">
+                <div class="upload-level__shimmer"></div>
+              </div>
+            </div>
+
+            <!-- 4 Stage Level Steps -->
+            <div class="upload-level__steps">
+              <div class="upload-level__step active" id="step-1">
+                <span class="step-num">1</span>
+                <span class="step-txt">Upload</span>
+              </div>
+              <div class="upload-level__step" id="step-2">
+                <span class="step-num">2</span>
+                <span class="step-txt">Extract</span>
+              </div>
+              <div class="upload-level__step" id="step-3">
+                <span class="step-num">3</span>
+                <span class="step-txt">Segregate</span>
+              </div>
+              <div class="upload-level__step" id="step-4">
+                <span class="step-num">4</span>
+                <span class="step-txt">Format Docs</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Converted Dual Download Cards (Visible after parsing or direct) -->
+      <div id="download-banner" style="display: none;">
+        <div class="results-grid">
+          
+          <!-- Theory Card -->
+          <div class="result-card">
+            <div>
+              <div class="result-card__meta">
+                <span class="badge-pill badge--theory">OFFICIAL WORD TEMPLATE</span>
+              </div>
+              <div class="result-card__title">
+                Theory Classes Day Time Table
+              </div>
+              <p class="result-card__desc">
+                Formatted into official <strong>B.Tech Theory classes Day time table(Sat)</strong> template. Includes Period, Faculty ID, Faculty Name, Course Code, Course Name, Room No, and merged class section headers.
+              </p>
+            </div>
+            
+            <div class="result-card__actions">
+              <button id="btn-dl-theory-docx" class="btn btn--orange btn--sm">
+                Download .docx (Modern Word) <span class="btn__arrow">→</span>
+              </button>
+              <button id="btn-dl-theory-doc" class="btn btn--outline btn--sm">
+                Download .doc (Word 97-2003) <span class="btn__arrow">→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Laboratories Card -->
+          <div class="result-card">
+            <div>
+              <div class="result-card__meta">
+                <span class="badge-pill badge--lab">OFFICIAL WORD TEMPLATE</span>
+              </div>
+              <div class="result-card__title">
+                Laboratories Day Time Table
+              </div>
+              <p class="result-card__desc">
+                Formatted into official <strong>B.Tech Laboratories Day time table (Sat)</strong> template. Includes laboratory period grouping, faculty pairs, lab rooms, and adjustment fields.
+              </p>
+            </div>
+            
+            <div class="result-card__actions">
+              <button id="btn-dl-lab-docx" class="btn btn--orange btn--sm">
+                Download .docx (Modern Word) <span class="btn__arrow">→</span>
+              </button>
+              <button id="btn-dl-lab-doc" class="btn btn--outline btn--sm">
+                Download .doc (Word 97-2003) <span class="btn__arrow">→</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Data Table Inspector -->
+      <div class="zcard" id="preview-card" style="display: none; margin-top: 28px;">
+        <div class="zcard__head">
+          <div class="zcard__title">
+            <span class="o">📋</span> Extracted Schedule Records
+            <span id="stat-total-classes" class="badge-pill badge--theory" style="margin-left: 8px;">0 Classes</span>
+            <span id="stat-theory-count" class="badge-pill badge--theory">0 Theory</span>
+            <span id="stat-lab-count" class="badge-pill badge--lab">0 Labs</span>
+          </div>
+
+          <div class="table-controls-mobile" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <select id="branch-select" class="zselect" style="width: auto; padding: 8px 14px; font-size: 13.5px;" onchange="filterTableByBranch()">
+              <option value="ALL">All Branches</option>
+            </select>
+
+            <div style="display: flex; gap: 6px;">
+              <button id="filter-all-btn" class="btn btn--orange btn--sm" onclick="setSessionFilter('ALL')">All</button>
+              <button id="filter-theory-btn" class="btn btn--outline btn--sm" onclick="setSessionFilter('THEORY')">Theory</button>
+              <button id="filter-lab-btn" class="btn btn--outline btn--sm" onclick="setSessionFilter('LAB')">Labs</button>
+            </div>
+
+            <input type="text" id="class-search-input" class="zinput" placeholder="Search class or code..." style="width: 170px; padding: 8px 14px; font-size: 13.5px;" oninput="filterTableBySearch()">
+
+            <button class="btn btn--ink btn--sm" onclick="exportEditedTimetable()">
+              Save Edits &amp; Direct Export <span class="btn__arrow">→</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="ztable-wrap">
+          <div class="table-responsive">
+            <table class="ztable" id="timetable-display-table">
+              <thead>
+                <tr>
+                  <th style="width: 60px; text-align: center;">Period</th>
+                  <th style="width: 130px;">Faculty Id</th>
+                  <th style="width: 220px;">Faculty Name</th>
+                  <th style="width: 110px;">Course Code</th>
+                  <th>Course Name</th>
+                  <th style="width: 110px; text-align: center;">Room No</th>
+                  <th style="width: 90px;">Type</th>
+                  <th style="width: 130px;">Adjustment</th>
+                </tr>
+              </thead>
+              <tbody id="timetable-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= TAB 2: PRESENTATION SLIDES (COMING SOON) ================= -->
+    <div id="tab-slides" class="tab-pane" style="display: none;">
+      
+      <div class="zcard" style="text-align: center; padding: 68px 24px;">
+        <div class="coming-soon-icon">
+          📊
+        </div>
+        
+        <div style="margin-top: 22px;">
+          <span class="badge-pill badge--lab" style="font-size: 11px; letter-spacing: 0.12em; padding: 5px 14px;">
+            UNDER ACTIVE INSTITUTIONAL CALIBRATION
+          </span>
+        </div>
+
+        <h2 style="font-family: var(--sans-display); font-size: clamp(24px, 2.5vw, 34px); font-weight: 800; margin: 18px 0 12px; color: var(--ink); letter-spacing: -0.02em;">
+          AI Slide Deck Generator v3.5
+        </h2>
+
+        <p style="max-width: 580px; margin: 0 auto 28px; color: var(--grey); font-size: 15.5px; line-height: 1.65;">
+          This engine module is currently being fine-tuned to automatically ingest institutional Day Time Table schedules and output structured 7-slide Microsoft PowerPoint (<code style="color:var(--orange)">.pptx</code>) lecture presentations complete with syllabus objectives, architecture diagrams, and speaker notes.
+        </p>
+
+        <div style="display: inline-flex; align-items: center; gap: 12px;">
+          <button class="btn btn--outline" disabled style="opacity: 0.7; cursor: not-allowed;">
+            Feature Coming Soon <span class="btn__arrow">→</span>
+          </button>
+          <button class="btn btn--orange" onclick="switchTab('timetable')">
+            Back to Timetable Converter <span class="btn__arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Toast Notifications Container -->
+  <div id="toast-container"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
