@@ -12,6 +12,7 @@ from typing import Optional, List, Dict, Any
 from core.timetable_parser import parse_timetable_pdf
 from core.docx_generator import generate_theory_timetable_docx, generate_lab_timetable_docx
 from core.pptx_generator import generate_presentation
+from core.iare_pptx_engine import generate_iare_presentation
 
 app = FastAPI(title="KSR Sagar Document Converter", version="3.0.0")
 
@@ -81,13 +82,21 @@ class TimetableExportRequest(BaseModel):
     selected_branch: Optional[str] = "ALL"
 
 class PresentationRequest(BaseModel):
-    title: str
-    faculty_name: str
-    department: str
-    category: str = "Faculty Lecture"
-    density: str = "Balanced"
-    slides_count: int = 7
-    speaker_notes: bool = True
+    topic: Optional[str] = "Reduce Risk And Confidently Accelerate Your Business In The Cloud"
+    title: Optional[str] = None
+    course_name: Optional[str] = "CLOUD APPLICATION DEVELOPMENT"
+    faculty_name: Optional[str] = "KS R Sagar"
+    faculty_id: Optional[str] = "IARE11024"
+    department: Optional[str] = "IT"
+    lecture_number: Optional[str] = "56"
+    category: Optional[str] = "Faculty Lecture"
+    density: Optional[str] = "Balanced"
+    slides_count: Optional[int] = 10
+    include_flowcharts: Optional[bool] = True
+    include_diagrams: Optional[bool] = True
+    include_tables: Optional[bool] = True
+    speaker_notes: Optional[bool] = True
+    custom_subtopics: Optional[str] = ""
 
 @app.get("/api/info")
 def get_info():
@@ -207,20 +216,56 @@ def export_timetable(req: TimetableExportRequest):
 
 @app.post("/api/presentation/generate")
 def create_presentation(req: PresentationRequest):
+    import re
+    from pptx import Presentation
     job_id = str(uuid.uuid4())[:8]
-    filename = f"KSR_Presentation_{job_id}.pptx"
+    data = req.dict()
+    topic = data.get("topic") or data.get("title") or "Academic Lecture Presentation"
+    data["topic"] = topic
+    data["title"] = topic
+    
+    clean_topic = re.sub(r'[^a-zA-Z0-9_\-]', '_', topic[:30]).strip('_')
+    filename = f"IARE_Lecture_{data.get('lecture_number', '56')}_{clean_topic}_{job_id}.pptx"
     output_path = os.path.join(OUTPUTS_DIR, filename)
     
-    generate_presentation(req.dict(), output_path)
+    generate_iare_presentation(data, output_path)
+    
+    # Extract preview slides
+    prs = Presentation(output_path)
+    slides_preview = []
+    for idx, s in enumerate(prs.slides):
+        slide_title = ""
+        points = []
+        for shp in s.shapes:
+            if shp.has_text_frame:
+                for p in shp.text_frame.paragraphs:
+                    txt = p.text.strip()
+                    if txt:
+                        if not slide_title:
+                            slide_title = txt
+                        else:
+                            points.append(txt)
+            elif shp.has_table:
+                points.append(f"Comparative Benchmark Table ({len(shp.table.rows)} rows x {len(shp.table.columns)} cols)")
+        slides_preview.append({
+            "slide_number": idx + 1,
+            "title": slide_title,
+            "layout": s.slide_layout.name,
+            "content_snippet": points[:4]
+        })
     
     return {
         "success": True,
         "filename": filename,
         "download_url": f"/api/download/{filename}",
-        "slides_count": req.slides_count,
-        "title": req.title,
-        "category": req.category,
-        "faculty_name": req.faculty_name
+        "slides_count": len(prs.slides),
+        "topic": topic,
+        "course_name": data.get("course_name"),
+        "faculty_name": data.get("faculty_name"),
+        "faculty_id": data.get("faculty_id"),
+        "department": data.get("department"),
+        "lecture_number": data.get("lecture_number"),
+        "slides": slides_preview
     }
 
 def get_or_generate_file(filename: str) -> str:

@@ -1794,6 +1794,165 @@ html[data-theme="dark"] .toast {
   }
 }
 
+/* ==========================================================================
+   IARE SLIDE MAKER STYLES (MOBILE-FIRST & RESPONSIVE)
+   ========================================================================== */
 
+.btn-pill-opt {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--grey);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s var(--ease);
+  min-height: 36px;
+}
 
+.btn-pill-opt:hover {
+  border-color: var(--orange);
+  color: var(--ink);
+}
 
+.btn-pill-opt.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: #FFFFFF;
+}
+
+.toggle-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  user-select: none;
+  min-height: 48px;
+}
+
+.toggle-card:hover {
+  border-color: rgba(255, 81, 0, 0.4);
+  background: var(--ink-12);
+}
+
+.toggle-card input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--orange);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle-card__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggle-card__title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.toggle-card__sub {
+  font-size: 11.5px;
+  color: var(--grey);
+  margin-top: 2px;
+}
+
+.slide-deck-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-deck-card:hover {
+  border-color: var(--orange);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.slide-deck-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.slide-deck-card__num {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--ink);
+  color: #FFFFFF;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.slide-deck-card__badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 80, 148, 0.1);
+  color: #005094;
+}
+
+.slide-deck-card__title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.35;
+  margin-bottom: 8px;
+  font-family: var(--sans);
+}
+
+.slide-deck-card__snippet {
+  font-size: 11.5px;
+  color: var(--grey);
+  line-height: 1.45;
+  border-top: 1px dashed var(--line);
+  padding-top: 8px;
+  margin-top: auto;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 640px) {
+  .segmented-nav {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  .seg-btn {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 12px 14px !important;
+    font-size: 13.5px !important;
+  }
+  .nav__links {
+    gap: 8px !important;
+  }
+  .nav__link {
+    font-size: 13px !important;
+    padding: 6px 10px !important;
+  }
+  .toggle-card {
+    padding: 10px 12px !important;
+  }
+  .btn-pill-opt {
+    flex: 1 1 calc(50% - 6px) !important;
+    text-align: center !important;
+  }
+}

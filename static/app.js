@@ -508,24 +508,209 @@ async function exportEditedTimetable() {
   }
 }
 
-// ================= PRESENTATION SLIDE MAKER =================
+// ================= TAB SWITCHING =================
+function switchTab(tabId) {
+  const tabTimetable = document.getElementById('tab-timetable');
+  const tabSlides = document.getElementById('tab-slides');
+  const navTimetable = document.getElementById('nav-link-timetable');
+  const navSlides = document.getElementById('nav-link-slides');
+  
+  const heroLive = document.querySelector('.shero__live');
+  const heroLabel = document.querySelector('.shero__top .label');
+  const heroTitle = document.querySelector('.shero__title');
+  const heroLead = document.querySelector('.shero__lead');
+  const heroCtaBtn = document.querySelector('.shero__cta button');
+  const heroCtaLabel = document.querySelector('.shero__aside .label');
+  const crumbHere = document.querySelector('.crumb .here');
 
-async function generateSlides(e) {
+  if (tabId === 'slides') {
+    if (tabTimetable) tabTimetable.style.display = 'none';
+    if (tabSlides) tabSlides.style.display = 'block';
+    if (navTimetable) navTimetable.classList.remove('active');
+    if (navSlides) navSlides.classList.add('active');
+    
+    if (heroLive) heroLive.innerText = 'Live Slide Maker v3.0';
+    if (heroLabel) heroLabel.innerText = 'IARE Academic Lecture Standards';
+    if (heroTitle) heroTitle.innerHTML = 'Slide<span class="shero__br"><br /></span>Maker<span class="o">.</span>';
+    if (heroLead) heroLead.innerHTML = 'Official Microsoft PowerPoint (.pptx) lecture generator tailored strictly to institutional curriculum standards, <span class="muted">complete with deep live internet research, vector flowcharts, system architectures, benchmark tables, and Bloom\'s taxonomy review assessments.</span>';
+    if (heroCtaBtn) {
+      heroCtaBtn.innerHTML = 'Create Presentation Deck <span class="btn__arrow">→</span>';
+      heroCtaBtn.onclick = () => {
+        const el = document.getElementById('slide-maker-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      };
+    }
+    if (heroCtaLabel) heroCtaLabel.innerText = 'Zero mock data • Direct PowerPoint (.pptx) exports';
+    if (crumbHere) crumbHere.innerText = 'Slide Maker';
+
+    window.scrollTo({ top: 300, behavior: 'smooth' });
+  } else {
+    if (tabTimetable) tabTimetable.style.display = 'block';
+    if (tabSlides) tabSlides.style.display = 'none';
+    if (navTimetable) navTimetable.classList.add('active');
+    if (navSlides) navSlides.classList.remove('active');
+    
+    if (heroLive) heroLive.innerText = 'Live Conversion Engine v3.0';
+    if (heroLabel) heroLabel.innerText = 'IARE Schedule Architecture';
+    if (heroTitle) heroTitle.innerHTML = 'Timetable<span class="shero__br"><br /></span>Converter<span class="o">.</span>';
+    if (heroLead) heroLead.innerHTML = 'Institutional document conversion that parses Day Time Table PDFs <span class="muted">into official Microsoft Word (.docx &amp; .doc) formats with 100% table fidelity, separated into Theory and Laboratories timetables, plus AI lecture slides.</span>';
+    if (heroCtaBtn) {
+      heroCtaBtn.innerHTML = 'Upload Day Time Table PDF <span class="btn__arrow">→</span>';
+      heroCtaBtn.onclick = () => {
+        const fileIn = document.getElementById('file-timetable-input');
+        if (fileIn) fileIn.click();
+      };
+    }
+    if (heroCtaLabel) heroCtaLabel.innerText = 'Zero JSON latency • Direct Word & PowerPoint exports';
+    if (crumbHere) crumbHere.innerText = 'Timetable & Presentation Suite';
+  }
+}
+
+// ================= IARE PPT MAKER CONTROLS =================
+
+function syncSlideCount(val) {
+  const num = parseInt(val) || 10;
+  document.getElementById('iare-slides-count').value = num;
+  document.getElementById('slider-count-badge').innerText = `${num} Slides`;
+  updatePillCountActive(num);
+}
+
+function syncSlideSlider(val) {
+  let num = parseInt(val) || 10;
+  num = Math.max(5, Math.min(50, num));
+  document.getElementById('iare-slides-slider').value = num;
+  document.getElementById('slider-count-badge').innerText = `${num} Slides`;
+  updatePillCountActive(num);
+}
+
+function setSlideCountVal(num) {
+  document.getElementById('iare-slides-slider').value = num;
+  document.getElementById('iare-slides-count').value = num;
+  document.getElementById('slider-count-badge').innerText = `${num} Slides`;
+  updatePillCountActive(num);
+}
+
+function updatePillCountActive(num) {
+  document.querySelectorAll('.btn-pill-opt').forEach(btn => {
+    const txt = btn.innerText;
+    if (txt.includes(`${num} Slides`)) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+function applyTopicPreset(topic, course, count) {
+  document.getElementById('iare-topic').value = topic;
+  document.getElementById('iare-course').value = course;
+  setSlideCountVal(count);
+  showToast(`Loaded preset: "${topic}" (${count} slides)`, 'info');
+}
+
+function loadReferencePreset() {
+  document.getElementById('iare-topic').value = 'Reduce Risk And Confidently Accelerate Your Business In The Cloud';
+  document.getElementById('iare-course').value = 'CLOUD APPLICATION DEVELOPMENT';
+  document.getElementById('iare-faculty-name').value = 'KS R Sagar';
+  document.getElementById('iare-faculty-id').value = 'IARE11024';
+  document.getElementById('iare-department').value = 'IT';
+  document.getElementById('iare-lecture-num').value = '56';
+  setSlideCountVal(22);
+  document.getElementById('iare-opt-flowcharts').checked = true;
+  document.getElementById('iare-opt-diagrams').checked = true;
+  document.getElementById('iare-opt-tables').checked = true;
+  document.getElementById('iare-opt-notes').checked = true;
+  document.getElementById('iare-custom-subtopics').value = 'Cloud Identity Management, Microservices Security, Resilience Testing';
+  showToast('Loaded exact IARE LECTURE PPT FORMAT50 reference preset!', 'success');
+}
+
+// ================= IARE PRESENTATION SUBMIT & RENDER =================
+
+let progressInterval = null;
+
+async function handlePptSubmit(e) {
   e.preventDefault();
 
-  const btn = document.getElementById('btn-generate-slides');
-  const origText = btn.innerHTML;
-  btn.innerHTML = `<span class="spinner"></span> Generating Presentation Deck...`;
-  btn.disabled = true;
+  const topic = document.getElementById('iare-topic').value.trim();
+  const course = document.getElementById('iare-course').value.trim() || 'CLOUD APPLICATION DEVELOPMENT';
+  const slidesCount = parseInt(document.getElementById('iare-slides-count').value) || 10;
+  const facultyName = document.getElementById('iare-faculty-name').value.trim() || 'KS R Sagar';
+  const facultyId = document.getElementById('iare-faculty-id').value.trim() || 'IARE11024';
+  const department = document.getElementById('iare-department').value.trim() || 'IT';
+  const lectureNum = document.getElementById('iare-lecture-num').value.trim() || '56';
+  
+  const flowcharts = document.getElementById('iare-opt-flowcharts').checked;
+  const diagrams = document.getElementById('iare-opt-diagrams').checked;
+  const tables = document.getElementById('iare-opt-tables').checked;
+  const notes = document.getElementById('iare-opt-notes').checked;
+  const customSubtopics = document.getElementById('iare-custom-subtopics').value.trim();
+
+  const submitBtn = document.getElementById('btn-generate-ppt');
+  const origBtnText = submitBtn.innerHTML;
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = `<span class="spinner"></span> Deep Researching &amp; Compiling Deck...`;
+
+  // Display and start Progress Tracker
+  const progCard = document.getElementById('ppt-progress-card');
+  const progBadge = document.getElementById('ppt-progress-badge');
+  const progStatus = document.getElementById('ppt-progress-status');
+  const progPct = document.getElementById('ppt-progress-pct');
+  const progBar = document.getElementById('ppt-progress-bar');
+  const resBanner = document.getElementById('ppt-result-banner');
+
+  if (resBanner) resBanner.style.display = 'none';
+  if (progCard) {
+    progCard.style.display = 'block';
+    progCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  let curPct = 10;
+  progBar.style.width = '10%';
+  progPct.innerText = '10%';
+  progBadge.innerText = 'INITIALIZING';
+  progStatus.innerText = 'Formulating technical domain queries and keyword extraction...';
+
+  const stages = [
+    { pct: 25, badge: 'WEB RESEARCH', text: `Deep researching "${topic}" via Wikipedia & technical registries...`, step: 1 },
+    { pct: 55, badge: 'FACT SYNTHESIS', text: 'Extracting verified architectural principles, mechanisms & protocols...', step: 2 },
+    { pct: 75, badge: 'DIAGRAM ASSEMBLE', text: 'Generating vector flowcharts, system tier diagrams & benchmark tables...', step: 3 },
+    { pct: 90, badge: 'FORMATTING PPTX', text: 'Compiling IARE FORMAT50 slide masters, typography, logos & gradient bars...', step: 4 }
+  ];
+
+  let stageIdx = 0;
+  progressInterval = setInterval(() => {
+    if (stageIdx < stages.length) {
+      const s = stages[stageIdx];
+      curPct = s.pct;
+      progBar.style.width = `${curPct}%`;
+      progPct.innerText = `${curPct}%`;
+      progBadge.innerText = s.badge;
+      progStatus.innerText = s.text;
+
+      for (let i = 1; i <= 4; i++) {
+        const stepEl = document.getElementById(`ppt-step-${i}`);
+        if (stepEl) {
+          if (i <= s.step) stepEl.classList.add('active');
+          else stepEl.classList.remove('active');
+        }
+      }
+      stageIdx++;
+    }
+  }, 1200);
 
   const payload = {
-    title: document.getElementById('slide-title').value || 'Course Instruction & Lecture Plan',
-    faculty_name: document.getElementById('slide-faculty').value || 'Faculty Member',
-    department: document.getElementById('slide-dept').value || 'Computer Science & Engineering',
-    category: document.getElementById('slide-category').value || 'Faculty Lecture',
-    density: document.getElementById('slide-density').value || 'Balanced',
-    slides_count: 7,
-    speaker_notes: document.getElementById('slide-notes-check').checked
+    topic: topic,
+    course_name: course,
+    slides_count: slidesCount,
+    faculty_name: facultyName,
+    faculty_id: facultyId,
+    department: department,
+    lecture_number: lectureNum,
+    include_flowcharts: flowcharts,
+    include_diagrams: diagrams,
+    include_tables: tables,
+    speaker_notes: notes,
+    custom_subtopics: customSubtopics
   };
 
   try {
@@ -534,29 +719,118 @@ async function generateSlides(e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+
     const result = await res.json();
-    if (!res.ok) throw new Error(result.detail || 'Slide generation failed');
+    if (!res.ok) throw new Error(result.detail || 'Failed to generate presentation deck');
 
-    // Update UI card
-    const resCard = document.getElementById('pres-result-card');
-    if (resCard) resCard.style.display = 'block';
+    // Complete Progress
+    clearInterval(progressInterval);
+    progBar.style.width = '100%';
+    progPct.innerText = '100%';
+    progBadge.innerText = 'COMPLETE';
+    progStatus.innerText = `Successfully compiled ${result.slides_count} slides strictly adhering to IARE FORMAT50!`;
 
-    document.getElementById('pres-result-title').innerText = result.title;
-    document.getElementById('pres-result-desc').innerText = `Created for ${result.faculty_name} (${result.category}) with 7 structured slides and speaker notes.`;
-    
-    // Wire safe download
-    setupDownloadButton('btn-download-pptx', result.download_url, `${result.title.replace(/\s+/g, '_')}.pptx`);
-    
-    // Auto-trigger direct download
-    triggerFileDownload(result.download_url, `${result.title.replace(/\s+/g, '_')}.pptx`);
-    showToast(`PowerPoint deck "${result.title}" generated! Download started.`, 'success');
+    setTimeout(() => {
+      progCard.style.display = 'none';
+      renderPresentationResult(result);
+    }, 600);
+
+    showToast(`IARE Presentation "${result.topic}" generated! Download starting...`, 'success');
+
   } catch (err) {
+    clearInterval(progressInterval);
+    progCard.style.display = 'none';
     showToast(err.message, 'error');
   } finally {
-    btn.innerHTML = origText;
-    btn.disabled = false;
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = origBtnText;
   }
 }
+
+function renderPresentationResult(result) {
+  const resBanner = document.getElementById('ppt-result-banner');
+  if (!resBanner) return;
+  resBanner.style.display = 'block';
+
+  document.getElementById('res-ppt-title').innerText = result.topic;
+  document.getElementById('res-badge-slides').innerText = `${result.slides_count} Slides`;
+  document.getElementById('res-ppt-filename').innerText = result.filename;
+  document.getElementById('res-ppt-desc').innerText = 
+    `Course: ${result.course_name}  •  Presenter: ${result.faculty_name} (${result.department})  •  Lecture: #${result.lecture_number}. Format contains official IARE crest, gradient banner/footer, vector diagrams, and Bloom's taxonomy review questions.`;
+
+  // Download button
+  const dlBtn = document.getElementById('btn-download-iare-pptx');
+  if (dlBtn) {
+    dlBtn.onclick = () => triggerFileDownload(result.download_url, result.filename);
+  }
+
+  // Auto-trigger direct download
+  triggerFileDownload(result.download_url, result.filename);
+
+  // Render Slide Deck Grid
+  document.getElementById('res-slides-count-label').innerText = result.slides_count;
+  const grid = document.getElementById('slides-deck-grid');
+  grid.innerHTML = '';
+
+  const slides = result.slides || [];
+  slides.forEach(slide => {
+    const card = document.createElement('div');
+    card.className = 'slide-deck-card';
+
+    let layoutTag = 'Standard Content';
+    let badgeClass = 'badge--theory';
+    if (slide.layout.includes('Title')) {
+      layoutTag = 'Title Slide';
+      badgeClass = 'badge--lab';
+    } else if (slide.layout.includes('Closing')) {
+      layoutTag = 'Closing Slide';
+      badgeClass = 'badge--lab';
+    } else if (slide.title.toLowerCase().includes('architecture')) {
+      layoutTag = 'Architecture Tiers';
+    } else if (slide.title.toLowerCase().includes('pipeline') || slide.title.toLowerCase().includes('flowchart')) {
+      layoutTag = 'Vector Flowchart';
+    } else if (slide.title.toLowerCase().includes('comparative') || slide.title.toLowerCase().includes('table')) {
+      layoutTag = 'Benchmark Table';
+    } else if (slide.title.toLowerCase().includes('trade-off')) {
+      layoutTag = '2-Column Trade-offs';
+    } else if (slide.title.toLowerCase().includes('review')) {
+      layoutTag = "Bloom's Review Questions";
+    }
+
+    const snippetHtml = (slide.content_snippet && slide.content_snippet.length)
+      ? slide.content_snippet.map(pt => `<div style="margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">• ${escapeHtml(pt)}</div>`).join('')
+      : '<div style="color: var(--grey); font-style: italic;">Title &amp; Faculty Banner Credentials</div>';
+
+    card.innerHTML = `
+      <div class="slide-deck-card__head">
+        <span class="slide-deck-card__num">Slide ${slide.slide_number}</span>
+        <span class="badge-pill ${badgeClass}" style="font-size: 10px; padding: 2px 8px;">${layoutTag}</span>
+      </div>
+      <div class="slide-deck-card__title">
+        ${escapeHtml(slide.title || 'Untitled Slide')}
+      </div>
+      <div class="slide-deck-card__snippet">
+        ${snippetHtml}
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  resBanner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return String(text).replace(/[&<>"']/g, m => map[m]);
+}
+
 
 // Drag & drop handlers
 function handleDragOver(e) {

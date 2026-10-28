@@ -26,6 +26,27 @@ export default function App() {
   const [branchFilter, setBranchFilter] = useState('ALL');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Slide Maker States
+  const [pptTopic, setPptTopic] = useState('Reduce Risk And Confidently Accelerate Your Business In The Cloud');
+  const [pptCourse, setPptCourse] = useState('CLOUD APPLICATION DEVELOPMENT');
+  const [pptSlidesCount, setPptSlidesCount] = useState(10);
+  const [pptFacultyName, setPptFacultyName] = useState('KS R Sagar');
+  const [pptFacultyId, setPptFacultyId] = useState('IARE11024');
+  const [pptDepartment, setPptDepartment] = useState('IT');
+  const [pptLectureNum, setPptLectureNum] = useState('56');
+  const [pptFlowcharts, setPptFlowcharts] = useState(true);
+  const [pptDiagrams, setPptDiagrams] = useState(true);
+  const [pptTables, setPptTables] = useState(true);
+  const [pptNotes, setPptNotes] = useState(true);
+  const [pptCustomSubtopics, setPptCustomSubtopics] = useState('');
+
+  const [isPptGenerating, setIsPptGenerating] = useState(false);
+  const [pptProgressPct, setPptProgressPct] = useState(15);
+  const [pptProgressBadge, setPptProgressBadge] = useState('INITIALIZING');
+  const [pptProgressStatus, setPptProgressStatus] = useState('Formulating technical domain queries...');
+  const [pptProgressStep, setPptProgressStep] = useState(1);
+  const [pptResult, setPptResult] = useState(null);
+
   const fileInputRef = useRef(null);
   const downloadBannerRef = useRef(null);
   const dropzoneRef = useRef(null);
@@ -204,6 +225,88 @@ export default function App() {
     });
   }
 
+  const handleGeneratePpt = async (e) => {
+    e.preventDefault();
+    if (!pptTopic.trim()) {
+      showToast('Please enter a presentation topic title.', 'error');
+      return;
+    }
+    setIsPptGenerating(true);
+    setPptProgressPct(15);
+    setPptProgressBadge('WEB RESEARCH');
+    setPptProgressStatus(`Deep researching "${pptTopic}" via Wikipedia & technical sources...`);
+    setPptProgressStep(1);
+
+    const progressTimer = setInterval(() => {
+      setPptProgressPct(prev => {
+        if (prev < 40) {
+          setPptProgressBadge('FACT EXTRACTION');
+          setPptProgressStatus('Extracting verified architectural principles, mechanisms & protocols...');
+          setPptProgressStep(2);
+          return prev + 12;
+        } else if (prev < 70) {
+          setPptProgressBadge('VECTOR DIAGRAMS');
+          setPptProgressStatus('Synthesizing vector flowcharts, system tier diagrams & benchmark tables...');
+          setPptProgressStep(3);
+          return prev + 10;
+        } else if (prev < 90) {
+          setPptProgressBadge('COMPILING PPTX');
+          setPptProgressStatus('Compiling IARE slide masters, typography, logos & gradient bars...');
+          setPptProgressStep(4);
+          return prev + 5;
+        }
+        return prev;
+      });
+    }, 1000);
+
+    const payload = {
+      topic: pptTopic,
+      course_name: pptCourse,
+      slides_count: parseInt(pptSlidesCount) || 10,
+      faculty_name: pptFacultyName,
+      faculty_id: pptFacultyId,
+      department: pptDepartment,
+      lecture_number: pptLectureNum,
+      include_flowcharts: pptFlowcharts,
+      include_diagrams: pptDiagrams,
+      include_tables: pptTables,
+      speaker_notes: pptNotes,
+      custom_subtopics: pptCustomSubtopics
+    };
+
+    try {
+      const res = await fetch('/api/presentation/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Presentation generation failed');
+
+      clearInterval(progressTimer);
+      setPptProgressPct(100);
+      setPptProgressBadge('COMPLETE');
+      setPptProgressStatus(`Successfully compiled ${data.slides_count} slides strictly adhering to IARE format!`);
+
+      setTimeout(() => {
+        setIsPptGenerating(false);
+        setPptResult(data);
+        showToast(`Presentation "${data.topic}" generated! Download starting...`, 'success');
+        const a = document.createElement('a');
+        a.href = data.download_url;
+        a.download = data.filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }, 600);
+
+    } catch (err) {
+      clearInterval(progressTimer);
+      setIsPptGenerating(false);
+      showToast(err.message, 'error');
+    }
+  };
+
   return (
     <>
       {/* Top Global Progress Bar */}
@@ -232,7 +335,7 @@ export default function App() {
               className={`nav__link ${activeTab === 'slides' ? 'active' : ''}`}
               onClick={() => setActiveTab('slides')}
             >
-              02. Slide Generator <span className="badge-soon">COMING SOON</span>
+              02. Slide Maker
             </button>
           </nav>
 
@@ -266,39 +369,72 @@ export default function App() {
           <span className="sep">/</span>
           <span>Services</span>
           <span className="sep">/</span>
-          <span className="here">Timetable &amp; Presentation Suite</span>
+          <span className="here">{activeTab === 'slides' ? 'Slide Maker' : 'Timetable & Presentation Suite'}</span>
         </nav>
       </section>
 
       {/* Service Hero */}
       <section className="shero wrap">
         <div className="shero__top">
-          <div className="shero__live">Live Conversion Engine v3.0</div>
-          <span className="label">IARE Schedule Architecture</span>
+          <div className="shero__live">
+            {activeTab === 'slides' ? 'Live Slide Maker v3.0' : 'Live Conversion Engine v3.0'}
+          </div>
+          <span className="label">
+            {activeTab === 'slides' ? 'IARE Academic Lecture Standards' : 'IARE Schedule Architecture'}
+          </span>
         </div>
 
         <h1 className="shero__title">
-          Timetable<span className="shero__br"><br /></span>Converter<span className="o">.</span>
+          {activeTab === 'slides' ? (
+            <>Slide<span className="shero__br"><br /></span>Maker<span className="o">.</span></>
+          ) : (
+            <>Timetable<span className="shero__br"><br /></span>Converter<span className="o">.</span></>
+          )}
         </h1>
 
         <div className="shero__grid">
           <p className="shero__lead">
-            Institutional document conversion that parses Day Time Table PDFs{' '}
-            <span className="muted">
-              into official Microsoft Word (.docx &amp; .doc) formats with 100% table fidelity, separated into Theory and Laboratories timetables, plus AI lecture slides.
-            </span>
+            {activeTab === 'slides' ? (
+              <>
+                Official Microsoft PowerPoint (.pptx) lecture generator tailored strictly to institutional curriculum standards,{' '}
+                <span className="muted">
+                  complete with deep live internet research, vector flowcharts, system architectures, benchmark tables, and Bloom's taxonomy review assessments.
+                </span>
+              </>
+            ) : (
+              <>
+                Institutional document conversion that parses Day Time Table PDFs{' '}
+                <span className="muted">
+                  into official Microsoft Word (.docx &amp; .doc) formats with 100% table fidelity, separated into Theory and Laboratories timetables, plus AI lecture slides.
+                </span>
+              </>
+            )}
           </p>
 
           <div className="shero__aside">
             <div className="shero__cta">
-              <button
-                className="btn btn--orange"
-                onClick={() => fileInputRef.current && fileInputRef.current.click()}
-              >
-                Upload Day Time Table PDF <span className="btn__arrow">→</span>
-              </button>
+              {activeTab === 'slides' ? (
+                <button
+                  className="btn btn--orange"
+                  onClick={() => {
+                    const el = document.getElementById('slide-maker-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                >
+                  Create Presentation Deck <span className="btn__arrow">→</span>
+                </button>
+              ) : (
+                <button
+                  className="btn btn--orange"
+                  onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                >
+                  Upload Day Time Table PDF <span className="btn__arrow">→</span>
+                </button>
+              )}
             </div>
-            <p className="label" style={{ marginTop: 6 }}>Zero JSON latency • Direct Word &amp; PowerPoint exports</p>
+            <p className="label" style={{ marginTop: 6 }}>
+              {activeTab === 'slides' ? 'Zero mock data • Direct PowerPoint (.pptx) exports' : 'Zero JSON latency • Direct Word & PowerPoint exports'}
+            </p>
           </div>
         </div>
       </section>
@@ -313,14 +449,14 @@ export default function App() {
             <div className="showcase__chip"><span className="chip-dot"></span> B.Tech Theory Day Time Table (.docx &amp; .doc)</div>
             <div className="showcase__chip"><span className="chip-dot"></span> Laboratories Day Time Table (.docx &amp; .doc)</div>
             <div className="showcase__chip"><span className="chip-dot"></span> 142 Class Sections &amp; 546 Periods Parsed</div>
-            <div className="showcase__chip"><span className="chip-dot"></span> 7-Slide Structured Faculty Lecture Decks (.pptx)</div>
+            <div className="showcase__chip"><span className="chip-dot"></span> Structured Faculty Lecture Decks (.pptx)</div>
             <div className="showcase__chip"><span className="chip-dot"></span> Genuine Binary Word 97-2003 COM Export</div>
             <div className="showcase__chip"><span className="chip-dot"></span> Dean PG &amp; Saturday Schedule Integration</div>
             {/* Duplicates for marquee */}
             <div className="showcase__chip"><span className="chip-dot"></span> B.Tech Theory Day Time Table (.docx &amp; .doc)</div>
             <div className="showcase__chip"><span className="chip-dot"></span> Laboratories Day Time Table (.docx &amp; .doc)</div>
             <div className="showcase__chip"><span className="chip-dot"></span> 142 Class Sections &amp; 546 Periods Parsed</div>
-            <div className="showcase__chip"><span className="chip-dot"></span> 7-Slide Structured Faculty Lecture Decks (.pptx)</div>
+            <div className="showcase__chip"><span className="chip-dot"></span> Structured Faculty Lecture Decks (.pptx)</div>
             <div className="showcase__chip"><span className="chip-dot"></span> Genuine Binary Word 97-2003 COM Export</div>
             <div className="showcase__chip"><span className="chip-dot"></span> Dean PG &amp; Saturday Schedule Integration</div>
           </div>
@@ -341,7 +477,7 @@ export default function App() {
             className={`seg-btn ${activeTab === 'slides' ? 'active' : ''}`}
             onClick={() => setActiveTab('slides')}
           >
-            02. Slide Generator <span className="badge-soon">COMING SOON</span>
+            02. Slide Maker
           </button>
         </div>
 
@@ -623,31 +759,387 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 2: SLIDE GENERATOR (COMING SOON) */}
+        {/* TAB 2: SLIDE MAKER */}
         {activeTab === 'slides' && (
-          <div className="tab-pane">
-            <div className="zcard" style={{ textAlign: 'center', padding: 'clamp(36px, 6vw, 68px) 20px' }}>
-              <div className="coming-soon-icon">📊</div>
-              <div style={{ marginTop: 22 }}>
-                <span className="badge-pill badge--lab" style={{ fontSize: 11, letterSpacing: '0.12em', padding: '5px 14px' }}>
-                  UNDER ACTIVE INSTITUTIONAL CALIBRATION
-                </span>
+          <div className="tab-pane" id="slide-maker-section">
+            <div className="zcard">
+              <div className="zcard__head">
+                <div>
+                  <h2 style={{ fontFamily: 'var(--sans-display)', fontSize: 'clamp(20px, 3vw, 28px)', fontWeight: 800, margin: '0 0 6px', color: 'var(--ink)', letterSpacing: '-0.02em' }}>
+                    Slide Maker
+                  </h2>
+                  <p style={{ color: 'var(--grey)', fontSize: 14, maxWidth: 820, lineHeight: 1.5, margin: 0 }}>
+                    Generate authentic, institution-calibrated Microsoft PowerPoint (<code style={{ color: 'var(--orange)' }}>.pptx</code>) lecture presentations with vector flowcharts, system architecture tiers, comparative benchmark tables, and Bloom's taxonomy review assessments.
+                  </p>
+                </div>
               </div>
-              <h2 style={{ fontFamily: 'var(--sans-display)', fontSize: 'clamp(22px, 3.5vw, 34px)', fontWeight: 800, margin: '18px 0 12px', color: 'var(--ink)', letterSpacing: '-0.02em', lineHeight: 1.2 }}>
-                AI Slide Deck Generator v3.5
-              </h2>
-              <p style={{ maxWidth: 580, margin: '0 auto 28px', color: 'var(--grey)', fontSize: 'clamp(13.5px, 2vw, 15.5px)', lineHeight: 1.6 }}>
-                This engine module is currently being fine-tuned to automatically ingest institutional Day Time Table schedules and output structured 7-slide Microsoft PowerPoint (<code style={{ color: 'var(--orange)' }}>.pptx</code>) lecture presentations complete with syllabus objectives, architecture diagrams, and speaker notes.
-              </p>
-              <div className="coming-soon-actions">
-                <button className="btn btn--outline" disabled style={{ opacity: 0.7, cursor: 'not-allowed' }}>
-                  Feature Coming Soon <span className="btn__arrow">→</span>
-                </button>
-                <button className="btn btn--orange" onClick={() => setActiveTab('timetable')}>
-                  Back to Timetable Converter <span className="btn__arrow">→</span>
-                </button>
-              </div>
+
+              <form onSubmit={handleGeneratePpt} style={{ marginTop: 24 }}>
+                {/* 1. Topic Title */}
+                <div className="form-group" style={{ marginBottom: 20 }}>
+                  <label className="form-label" style={{ fontWeight: 700, fontSize: 14, color: 'var(--ink)', display: 'block', marginBottom: 8 }}>
+                    1. Presentation Topic Title (Exact Lecture Focus) *
+                  </label>
+                  <input
+                    type="text"
+                    className="zinput"
+                    style={{ width: '100%', fontSize: 15, padding: '12px 16px' }}
+                    placeholder="e.g. Reduce Risk And Confidently Accelerate Your Business In The Cloud"
+                    value={pptTopic}
+                    onChange={(e) => setPptTopic(e.target.value)}
+                    required
+                  />
+                </div>
+
+                {/* 2. Course Name & 3. Slide Count Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, marginBottom: 20 }}>
+                  <div className="form-group">
+                    <label className="form-label" style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--ink)', display: 'block', marginBottom: 8 }}>
+                      2. Course / Subject Name (Title Slide Header Banner)
+                    </label>
+                    <input
+                      type="text"
+                      className="zinput"
+                      style={{ width: '100%', fontSize: 14, padding: '10px 14px' }}
+                      placeholder="e.g. CLOUD APPLICATION DEVELOPMENT"
+                      value={pptCourse}
+                      onChange={(e) => setPptCourse(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <label className="form-label" style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--ink)', margin: 0 }}>
+                        3. Total Number of Slides (5 to 50)
+                      </label>
+                      <span className="badge-pill badge--theory" style={{ fontSize: 12, padding: '2px 10px' }}>
+                        {pptSlidesCount} Slides
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                      <input
+                        type="range"
+                        min="5"
+                        max="50"
+                        value={pptSlidesCount}
+                        style={{ flex: 1, accentColor: 'var(--orange)', cursor: 'pointer' }}
+                        onChange={(e) => setPptSlidesCount(parseInt(e.target.value) || 10)}
+                      />
+                      <input
+                        type="number"
+                        min="5"
+                        max="50"
+                        className="zinput"
+                        style={{ width: 72, textAlign: 'center', fontWeight: 700 }}
+                        value={pptSlidesCount}
+                        onChange={(e) => setPptSlidesCount(Math.max(5, Math.min(50, parseInt(e.target.value) || 10)))}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                      {[7, 10, 15, 22, 30, 50].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          className={`btn-pill-opt ${pptSlidesCount === num ? 'active' : ''}`}
+                          onClick={() => setPptSlidesCount(num)}
+                        >
+                          {num} Slides
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Presenter Credentials Grid */}
+                <div style={{ background: 'var(--ink-12)', padding: '16px 18px', borderRadius: 12, marginBottom: 20, border: '1px solid var(--line)' }}>
+                  <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--ink)', marginBottom: 12 }}>
+                    4. Faculty &amp; Institutional Credentials
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14 }}>
+                    <div>
+                      <label style={{ fontSize: 12, color: 'var(--grey)', fontWeight: 600, display: 'block', marginBottom: 4 }}>Presenter's Name</label>
+                      <input
+                        type="text"
+                        className="zinput"
+                        style={{ width: '100%', fontSize: 13.5 }}
+                        value={pptFacultyName}
+                        onChange={(e) => setPptFacultyName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 12, color: 'var(--grey)', fontWeight: 600, display: 'block', marginBottom: 4 }}>Presenter's ID</label>
+                      <input
+                        type="text"
+                        className="zinput"
+                        style={{ width: '100%', fontSize: 13.5 }}
+                        value={pptFacultyId}
+                        onChange={(e) => setPptFacultyId(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 12, color: 'var(--grey)', fontWeight: 600, display: 'block', marginBottom: 4 }}>Department</label>
+                      <input
+                        type="text"
+                        className="zinput"
+                        style={{ width: '100%', fontSize: 13.5 }}
+                        value={pptDepartment}
+                        onChange={(e) => setPptDepartment(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 12, color: 'var(--grey)', fontWeight: 600, display: 'block', marginBottom: 4 }}>Lecture Number</label>
+                      <input
+                        type="text"
+                        className="zinput"
+                        style={{ width: '100%', fontSize: 13.5 }}
+                        value={pptLectureNum}
+                        onChange={(e) => setPptLectureNum(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5. Extra Options Toggles */}
+                <div style={{ marginBottom: 20 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--ink)', marginBottom: 10 }}>
+                    5. Slide Content &amp; Visual Component Inclusions
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+                    <label className="toggle-card">
+                      <input
+                        type="checkbox"
+                        checked={pptFlowcharts}
+                        onChange={(e) => setPptFlowcharts(e.target.checked)}
+                      />
+                      <div className="toggle-card__body">
+                        <span className="toggle-card__title">🔀 Flowcharts &amp; Pipelines</span>
+                        <span className="toggle-card__sub">Multi-stage vector process diagrams</span>
+                      </div>
+                    </label>
+
+                    <label className="toggle-card">
+                      <input
+                        type="checkbox"
+                        checked={pptDiagrams}
+                        onChange={(e) => setPptDiagrams(e.target.checked)}
+                      />
+                      <div className="toggle-card__body">
+                        <span className="toggle-card__title">🏛️ Architecture Tiers</span>
+                        <span className="toggle-card__sub">Multi-tier modular framework blocks</span>
+                      </div>
+                    </label>
+
+                    <label className="toggle-card">
+                      <input
+                        type="checkbox"
+                        checked={pptTables}
+                        onChange={(e) => setPptTables(e.target.checked)}
+                      />
+                      <div className="toggle-card__body">
+                        <span className="toggle-card__title">📊 Benchmark Tables</span>
+                        <span className="toggle-card__sub">Comparative quantitative metrics</span>
+                      </div>
+                    </label>
+
+                    <label className="toggle-card">
+                      <input
+                        type="checkbox"
+                        checked={pptNotes}
+                        onChange={(e) => setPptNotes(e.target.checked)}
+                      />
+                      <div className="toggle-card__body">
+                        <span className="toggle-card__title">🎙️ Speaker Notes</span>
+                        <span className="toggle-card__sub">Pedagogical notes on every slide</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                {/* 6. Custom Subtopics / Outline (Optional) */}
+                <div className="form-group" style={{ marginBottom: 24 }}>
+                  <label className="form-label" style={{ fontWeight: 700, fontSize: 13.5, color: 'var(--ink)', display: 'block', marginBottom: 6 }}>
+                    6. Custom Specific Subtopics / Outline Focus (Optional)
+                  </label>
+                  <textarea
+                    className="zinput"
+                    style={{ width: '100%', minHeight: 60, fontSize: 13.5, padding: '10px 14px', resize: 'vertical' }}
+                    placeholder="e.g. Cloud Identity Management, Microservices Security, Resilience Testing (Optional: will be researched and integrated directly into slides)"
+                    value={pptCustomSubtopics}
+                    onChange={(e) => setPptCustomSubtopics(e.target.value)}
+                  />
+                </div>
+
+                {/* Submit Action */}
+                <div>
+                  <button
+                    type="submit"
+                    className="btn btn--orange"
+                    disabled={isPptGenerating}
+                    style={{ padding: '14px 28px', fontSize: 15, fontWeight: 700, width: '100%', maxWidth: 360 }}
+                  >
+                    {isPptGenerating ? (
+                      <><span className="spinner"></span> Generating Presentation Deck...</>
+                    ) : (
+                      <>⚡ Generate Presentation (.pptx) <span className="btn__arrow">→</span></>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
+
+            {/* Real-Time Progress Tracker */}
+            {isPptGenerating && (
+              <div className="upload-level" style={{ marginTop: 24 }}>
+                <div className="upload-level__head">
+                  <div className="upload-level__title">
+                    <span className="upload-level__icon">⚡</span>
+                    <span>SLIDE MAKER ENGINE</span>
+                  </div>
+                  <div className="upload-level__badge">{pptProgressBadge}</div>
+                </div>
+
+                <div className="upload-level__equalizer">
+                  <span className="eq-bar"></span>
+                  <span className="eq-bar"></span>
+                  <span className="eq-bar"></span>
+                  <span className="eq-bar"></span>
+                  <span className="eq-bar"></span>
+                  <span className="eq-bar"></span>
+                  <span className="eq-bar"></span>
+                  <span className="eq-bar"></span>
+                </div>
+
+                <div className="upload-level__stats">
+                  <div className="upload-level__status-text">{pptProgressStatus}</div>
+                  <div className="upload-level__pct">{pptProgressPct}%</div>
+                </div>
+
+                <div className="upload-level__meter">
+                  <div className="upload-level__bar" style={{ width: `${pptProgressPct}%` }}>
+                    <div className="upload-level__shimmer"></div>
+                  </div>
+                </div>
+
+                <div className="upload-level__steps">
+                  <div className={`upload-level__step ${pptProgressStep >= 1 ? 'active' : ''}`}>
+                    <span className="step-num">1</span>
+                    <span className="step-txt">Web Research</span>
+                  </div>
+                  <div className={`upload-level__step ${pptProgressStep >= 2 ? 'active' : ''}`}>
+                    <span className="step-num">2</span>
+                    <span className="step-txt">Synthesize</span>
+                  </div>
+                  <div className={`upload-level__step ${pptProgressStep >= 3 ? 'active' : ''}`}>
+                    <span className="step-num">3</span>
+                    <span className="step-txt">Vector Diagrams</span>
+                  </div>
+                  <div className={`upload-level__step ${pptProgressStep >= 4 ? 'active' : ''}`}>
+                    <span className="step-num">4</span>
+                    <span className="step-txt">Compile PPTX</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Generated Results Banner & Slide Browser */}
+            {pptResult && (
+              <div style={{ marginTop: 28 }}>
+                <div className="result-card" style={{ border: '2px solid var(--orange)', background: 'var(--white)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14 }}>
+                    <div>
+                      <div className="result-card__meta">
+                        <span className="badge-pill badge--theory">OFFICIAL PPT FORMAT</span>
+                        <span className="badge-pill badge--lab" style={{ marginLeft: 6 }}>{pptResult.slides_count} Slides</span>
+                      </div>
+                      <div className="result-card__title" style={{ marginTop: 10, fontSize: 20 }}>
+                        {pptResult.topic}
+                      </div>
+                      <p className="result-card__desc" style={{ maxWidth: 760, marginTop: 8 }}>
+                        Course: {pptResult.course_name} • Presenter: {pptResult.faculty_name} ({pptResult.department}) • Lecture: #{pptResult.lecture_number}. Format contains official slide master, vector diagrams, and Bloom's taxonomy review questions.
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-end', width: '100%', maxWidth: 300 }}>
+                      <a
+                        href={pptResult.download_url}
+                        download={pptResult.filename}
+                        className="btn btn--orange"
+                        style={{ padding: '14px 24px', fontSize: 14, fontWeight: 700, width: '100%', textAlign: 'center' }}
+                      >
+                        Download .pptx Presentation <span className="btn__arrow">↓</span>
+                      </a>
+                      <span style={{ fontSize: 12, color: 'var(--grey)', fontFamily: 'var(--mono)' }}>
+                        {pptResult.filename}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Slide Deck Grid */}
+                <div className="zcard" style={{ marginTop: 24 }}>
+                  <div className="zcard__head">
+                    <div className="zcard__title">
+                      <span className="o">📑</span> Generated Slide Deck Structure ({pptResult.slides_count} Slides)
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16, marginTop: 18 }}>
+                    {(pptResult.slides || []).map((slide) => {
+                      let layoutTag = 'Standard Content';
+                      let badgeClass = 'badge--theory';
+                      const titleLow = (slide.title || '').toLowerCase();
+                      if ((slide.layout || '').includes('Title')) {
+                        layoutTag = 'Title Slide';
+                        badgeClass = 'badge--lab';
+                      } else if ((slide.layout || '').includes('Closing')) {
+                        layoutTag = 'Closing Slide';
+                        badgeClass = 'badge--lab';
+                      } else if (titleLow.includes('architecture')) {
+                        layoutTag = 'Architecture Tiers';
+                      } else if (titleLow.includes('pipeline') || titleLow.includes('flowchart')) {
+                        layoutTag = 'Vector Flowchart';
+                      } else if (titleLow.includes('comparative') || titleLow.includes('table')) {
+                        layoutTag = 'Benchmark Table';
+                      } else if (titleLow.includes('trade-off')) {
+                        layoutTag = '2-Column Trade-offs';
+                      } else if (titleLow.includes('review')) {
+                        layoutTag = "Bloom's Review Questions";
+                      }
+
+                      return (
+                        <div key={slide.slide_number} className="slide-deck-card">
+                          <div className="slide-deck-card__head">
+                            <span className="slide-deck-card__num">Slide {slide.slide_number}</span>
+                            <span className={`badge-pill ${badgeClass}`} style={{ fontSize: 10, padding: '2px 8px' }}>
+                              {layoutTag}
+                            </span>
+                          </div>
+                          <div className="slide-deck-card__title">
+                            {slide.title || 'Untitled Slide'}
+                          </div>
+                          <div className="slide-deck-card__snippet">
+                            {slide.content_snippet && slide.content_snippet.length ? (
+                              slide.content_snippet.map((pt, pti) => (
+                                <div key={pti} style={{ marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  • {pt}
+                                </div>
+                              ))
+                            ) : (
+                              <div style={{ color: 'var(--grey)', fontStyle: 'italic' }}>Title &amp; Faculty Banner Credentials</div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>
