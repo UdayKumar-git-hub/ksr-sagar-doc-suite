@@ -514,6 +514,8 @@ function switchTab(tabId) {
   const tabSlides = document.getElementById('tab-slides');
   const navTimetable = document.getElementById('nav-link-timetable');
   const navSlides = document.getElementById('nav-link-slides');
+  const segTimetable = document.getElementById('seg-btn-timetable');
+  const segSlides = document.getElementById('seg-btn-slides');
   
   const heroLive = document.querySelector('.shero__live');
   const heroLabel = document.querySelector('.shero__top .label');
@@ -528,6 +530,8 @@ function switchTab(tabId) {
     if (tabSlides) tabSlides.style.display = 'block';
     if (navTimetable) navTimetable.classList.remove('active');
     if (navSlides) navSlides.classList.add('active');
+    if (segTimetable) segTimetable.classList.remove('active');
+    if (segSlides) segSlides.classList.add('active');
     
     if (heroLive) heroLive.innerText = 'Live Slide Maker v3.0';
     if (heroLabel) heroLabel.innerText = 'IARE Academic Lecture Standards';
@@ -543,12 +547,15 @@ function switchTab(tabId) {
     if (heroCtaLabel) heroCtaLabel.innerText = 'Zero mock data • Direct PowerPoint (.pptx) exports';
     if (crumbHere) crumbHere.innerText = 'Slide Maker';
 
-    window.scrollTo({ top: 300, behavior: 'smooth' });
+    const el = document.getElementById('tab-slides');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
     if (tabTimetable) tabTimetable.style.display = 'block';
     if (tabSlides) tabSlides.style.display = 'none';
     if (navTimetable) navTimetable.classList.add('active');
     if (navSlides) navSlides.classList.remove('active');
+    if (segTimetable) segTimetable.classList.add('active');
+    if (segSlides) segSlides.classList.remove('active');
     
     if (heroLive) heroLive.innerText = 'Live Conversion Engine v3.0';
     if (heroLabel) heroLabel.innerText = 'IARE Schedule Architecture';
@@ -563,6 +570,9 @@ function switchTab(tabId) {
     }
     if (heroCtaLabel) heroCtaLabel.innerText = 'Zero JSON latency • Direct Word & PowerPoint exports';
     if (crumbHere) crumbHere.innerText = 'Timetable & Presentation Suite';
+
+    const el = document.getElementById('tab-timetable');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 

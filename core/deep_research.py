@@ -1,7 +1,29 @@
 import os
 import re
-import requests
+import json
+import urllib.request
+import urllib.parse
 from typing import Dict, Any, List, Optional, Tuple
+
+try:
+    import requests
+except ImportError:
+    requests = None
+
+def _http_get_json(url: str, timeout: int = 6) -> Dict[str, Any]:
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) KSRDocSuite/3.0'}
+    if requests is not None:
+        try:
+            res = requests.get(url, headers=headers, timeout=timeout)
+            return res.json()
+        except Exception:
+            pass
+    try:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.loads(resp.read().decode('utf-8'))
+    except Exception:
+        return {}
 
 STOP_WORDS = {
     "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", 
@@ -65,21 +87,21 @@ def extract_search_queries(topic: str, course_name: str = "") -> List[str]:
     return final_queries
 
 def fetch_wiki_search_results(query: str, limit: int = 5) -> List[Dict[str, str]]:
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) KSRDocSuite/3.0'}
     try:
-        s_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={requests.utils.quote(query)}&utf8=&format=json"
-        res = requests.get(s_url, headers=headers, timeout=6)
-        return res.json().get('query', {}).get('search', [])[:limit]
-    except Exception as e:
+        quoted = urllib.parse.quote(query)
+        s_url = f"https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch={quoted}&utf8=&format=json"
+        data = _http_get_json(s_url, timeout=6)
+        return data.get('query', {}).get('search', [])[:limit]
+    except Exception:
         return []
 
 def fetch_wiki_page_details(title: str, max_sections: int = 15) -> Dict[str, Any]:
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) KSRDocSuite/3.0'}
     data = {"title": title, "summary": "", "sections": {}}
     try:
-        ext_url = f"https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&titles={requests.utils.quote(title)}&format=json"
-        res = requests.get(ext_url, headers=headers, timeout=6)
-        pages = res.json().get('query', {}).get('pages', {})
+        quoted = urllib.parse.quote(title)
+        ext_url = f"https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&titles={quoted}&format=json"
+        res_json = _http_get_json(ext_url, timeout=6)
+        pages = res_json.get('query', {}).get('pages', {})
         for pid, pdata in pages.items():
             full_text = pdata.get('extract', '')
             if full_text:
